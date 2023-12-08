@@ -4,12 +4,11 @@ import pandas as pd
 
 class DatabaseConnector:
     
-    def __init__(self, credential) -> None:
-        self.loaded_creds = self.read_db_creds(credential)
+    def __init__(self) -> None:
         self.engine = self.init_db_engine()
 
 
-    def read_db_creds(self,credential):
+    def read_db_creds(self):
         '''Load credentials file to access the database
         
         Args:
@@ -19,23 +18,13 @@ class DatabaseConnector:
             credential: returns a dict containing the credentials to
             connect to the database.
         '''
-        with open(credential, 'r') as file:
+        with open("./db_creds.yaml", 'r') as file:
             credential = yaml.safe_load(file)
-        #print(credential)
-        return credential
+            return credential
     
     def init_db_engine(self):
         '''initialises a SQLAlchemy engine from the credentials provided from class'''
-        creds = self.loaded_creds
-
-        DATABASE_TYPE = 'postgresql'
-        HOST = creds["RDS_HOST"]
-        PASSWORD = creds["RDS_PASSWORD"]
-        USER = creds["RDS_USER"]
-        DATABASE = creds["RDS_DATABASE"]
-        PORT = 5432
-
-        engine = create_engine(f"{DATABASE_TYPE}://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
+        engine = create_engine(f"postgresql://{self.read_db_creds()['RDS_USER']}:{self.read_db_creds()['RDS_PASSWORD']}@{self.read_db_creds()['RDS_HOST']}:{self.read_db_creds()['RDS_PORT']}/{self.read_db_creds()['RDS_DATABASE']}")        
         engine.execution_options(isolation_level='AUTOCOMMIT').connect()
         return engine
     
@@ -47,6 +36,8 @@ class DatabaseConnector:
         return result
     
 if __name__ == '__main__':
-    RDS_CONNECTOR = DatabaseConnector('db_creds.yaml')
+    RDS_CONNECTOR = DatabaseConnector()
     RDS_CONNECTOR.init_db_engine()
+    data = RDS_CONNECTOR.init_db_engine()
     RDS_CONNECTOR.list_db_tables()
+

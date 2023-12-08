@@ -5,7 +5,7 @@ from database_utils import DatabaseConnector
 class DataExtractor:
 
     def __init__(self) -> None:
-        self.dbc = DatabaseConnector()
+        self.dbconn = DatabaseConnector()
     
     def read_rds_table(self, table_name):
         '''Extracts the data from RDS database and returns it as a DataFrame.
@@ -15,7 +15,17 @@ class DataExtractor:
         Returns:
             DataFrame: returns the data we queried
         '''
-        data = pd.read_sql_table(table_name, self.dbc.engine)
+        data = pd.read_sql_table(table_name, self.dbconn.engine)
         df = pd.DataFrame(data)
         return df
     
+
+RDS_CONNECTOR = DatabaseConnector()
+RDS_CONNECTOR.init_db_engine()
+data = RDS_CONNECTOR.init_db_engine()
+RDS_CONNECTOR.list_db_tables()
+data = RDS_CONNECTOR.init_db_engine()
+
+lamb = DataExtractor()
+# ['legacy_store_details', 'legacy_users', 'orders_table']
+print(lamb.read_rds_table('legacy_users'))
