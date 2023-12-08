@@ -1,7 +1,7 @@
 # Multinational-Retail-Data-Centralisation
 
 - ## Table of Contents
-- [EDA-Customer-Loans](#multinational-retail-data-centralisation)
+- [Multinational-Retail-Data-Centralisation](#multinational-retail-data-centralisation)
 - [Description](#description)
 - [Installation](#installation)
 - [Usage](#usage)
