@@ -10,13 +10,22 @@ class DatabaseConnector:
 
 
     def read_db_creds(self,credential):
+        '''Load credentials file to access the database
+        
+        Args:
+            credential: path of the credentials file to connect to the database
 
+        Returns:
+            credential: returns a dict containing the credentials to
+            connect to the database.
+        '''
         with open(credential, 'r') as file:
             credential = yaml.safe_load(file)
         #print(credential)
         return credential
     
     def init_db_engine(self):
+        '''initialises a SQLAlchemy engine from the credentials provided from class'''
         creds = self.loaded_creds
 
         DATABASE_TYPE = 'postgresql'
@@ -31,6 +40,7 @@ class DatabaseConnector:
         return engine
     
     def list_db_tables(self):
+        '''Retrieves the names of the tables'''
         inspector = inspect(self.engine)
         result = inspector.get_table_names()
         print(result)
