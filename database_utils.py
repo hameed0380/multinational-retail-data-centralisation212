@@ -18,7 +18,7 @@ class DatabaseConnector:
             credential: returns a dict containing the credentials to
             connect to the database.
         '''
-        with open("./db_creds.yaml", 'r') as file:
+        with open("db_creds.yaml", 'r') as file:
             credential = yaml.safe_load(file)
             return credential
     
@@ -31,9 +31,14 @@ class DatabaseConnector:
     def list_db_tables(self):
         '''Retrieves the names of the tables'''
         inspector = inspect(self.engine)
-        result = inspector.get_table_names()
-        print(result)
-        return result
+        retrieved_names = inspector.get_table_names()
+        print(retrieved_names)
+        return retrieved_names
+    
+    def upload_to_db(self, df, tablename):
+        '''Creates and uploads table to database'''
+        engine = create_engine(f"postgresql://{self.read_db_creds()['PS_USER']}:{self.read_db_creds()['PS_PASSWORD']}@{self.read_db_creds()['PS_HOST']}:{self.read_db_creds()['PS_PORT']}/{self.read_db_creds()['PS_DATABASE']}")        
+        df.to_sql(tablename, engine, if_exists='replace', index=False)
     
 if __name__ == '__main__':
     RDS_CONNECTOR = DatabaseConnector()
