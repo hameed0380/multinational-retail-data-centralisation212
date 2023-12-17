@@ -42,7 +42,7 @@ class DatabaseConnector:
     
 if __name__ == '__main__':
     RDS_CONNECTOR = DatabaseConnector()
-    RDS_CONNECTOR.init_db_engine()
+    RDS_CONNECTOR.engine
     data = RDS_CONNECTOR.init_db_engine()
     RDS_CONNECTOR.list_db_tables()
 
