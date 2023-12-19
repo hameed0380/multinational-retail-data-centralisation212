@@ -39,6 +39,7 @@ class DatabaseConnector:
         '''Creates and uploads table to database'''
         engine = create_engine(f"postgresql://{self.read_db_creds()['PS_USER']}:{self.read_db_creds()['PS_PASSWORD']}@{self.read_db_creds()['PS_HOST']}:{self.read_db_creds()['PS_PORT']}/{self.read_db_creds()['PS_DATABASE']}")        
         df.to_sql(tablename, engine, if_exists='replace', index=False)
+        print("UPLOAD SUCCESSFUL")
     
 if __name__ == '__main__':
     RDS_CONNECTOR = DatabaseConnector()
