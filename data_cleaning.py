@@ -31,6 +31,11 @@ class DataCleaning:
             cleaned_user_df[cat_column] = cleaned_user_df[cat_column].astype('category')
         # print(cleaned_user_df.dtypes) # checking changes
             
+        # Drop rows with wrong country codes
+        incorrect_rcountry_codes = ~cleaned_user_df['country_code'].isin(['US','GB','DE'])
+        cleaned_user_df = cleaned_user_df[~incorrect_rcountry_codes]
+            
+
         return cleaned_user_df
 
         
@@ -102,7 +107,86 @@ class DataCleaning:
         print(cleaned_store_df)
         print(cleaned_store_df.dtypes) # checking changes
         return cleaned_store_df
+    
+    def convert_product_weights(self, weight):
+        # Base conversion ratio from dictionary key to kg - approximate oz
+        conversion_dict = {'kg':1,'g':10**(-3),'ml':10**(-3), 'oz':0.03}
+
+        weight = weight.lower().replace(' .','')
+
+        for key, value in conversion_dict.items():
+            if key in weight:
+                # Check if format is '1 x 100ml'
+                if 'x' in weight:
+                    weight = weight.replace(key, '').strip()
+                    return eval(weight.replace('x', '*')) * value
+
+                else:
+                    weight = float(weight.strip(key))
+                    return weight*value
+
+    def clean_products_data(self, product_df):
+        # Creating a copy of the dataframe which is best practice
+        cleaned_products_df = product_df.copy()
+        # Dropping the null values and dups
+        cleaned_products_df = cleaned_products_df.drop_duplicates().dropna()
+
+        # Standardise dates
+        cleaned_products_df['date_added'] = pd.to_datetime(cleaned_products_df['date_added'], format='%Y-%m-%d', errors='coerce').dt.date
+
+        # Remove £ from the rows in the column
+        cleaned_products_df['product_price'] = cleaned_products_df['product_price'].str.replace('£', '', regex=False)
+
+        # Acts like a mask to get all the letters in the product price, then filters the DataFrame by selecting only the rows where the corresponding value in incorrect_rows_with_invalid_prices is False
+        incorrect_rows_with_invalid_prices = cleaned_products_df['product_price'].str.contains(r'[a-zA-Z]+')
+        cleaned_products_df = cleaned_products_df[~incorrect_rows_with_invalid_prices]
         
+        # Cleaning the weight column to convert to kg & convert to dtype `float`
+        cleaned_products_df['weight'] = cleaned_products_df['weight'].apply(self.convert_product_weights)
+
+        # Convert to numeric and dropna 
+        cleaned_products_df['weight'] = pd.to_numeric(cleaned_products_df['weight'], errors='coerce')
+        cleaned_products_df = cleaned_products_df.dropna(subset=['weight'])
+
+        # Converting columns to correct dtypes.
+        cleaned_products_df['category'] = cleaned_products_df['category'].astype('category')
+        cleaned_products_df['removed'] = cleaned_products_df['removed'].astype('category')
+        cleaned_products_df['product_price'] = cleaned_products_df['product_price'].astype(float)
+        cleaned_products_df['weight'] = cleaned_products_df['weight'].astype(float)
+
+        return cleaned_products_df
+    
+    
+    def clean_orders_data(self, orders_df):
+        cleaned_orders_df = orders_df.copy()
+
+        # Dropping columns that are unnecessary or have the majority of rows with NULL in them.
+        cleaned_orders_df = cleaned_orders_df.drop(['level_0', '1', 'first_name', 'last_name'], axis=1)
+        
+        # change to a string so I can perform operations
+        cleaned_orders_df['card_number'] = cleaned_orders_df['card_number'].astype(str)
+        cleaned_orders_df['card_number'] = cleaned_orders_df['card_number'].apply(self.get_digits)
+
+        # Converting columns to correct dtypes.
+        cleaned_orders_df['product_quantity'] = cleaned_orders_df['product_quantity'].astype('int32')
+        # Remove dupes
+        cleaned_orders_df = cleaned_orders_df.drop_duplicates()
+
+        return cleaned_orders_df
+    
+
+    def clean_date_data(self, date_df):
+        
+        date_df = date_df.copy()
+
+        date_df = date_df.drop_duplicates()
+
+        date_df['timestamp'] = pd.to_datetime(date_df['timestamp'], format='%H:%M:%S',errors='coerce')
+        date_df = date_df.dropna(subset=['timestamp'])
+
+        # Extract the time component only
+        date_df['timestamp'] = date_df['timestamp'].dt.time
+        return date_df
 
 
 
