@@ -85,7 +85,9 @@ class DataExtractor:
         '''
         Retrieve anything trailling . in the url to retrieve the files extension rather then hard coding
         Args:
-            s3 address: 
+            s3 address: URL endpoint where the data is retrieved from
+        Return:
+            extension_retrieved: extracted extension
         '''
         delimiter = "."
         parts = s3_address.split(delimiter)
@@ -93,6 +95,14 @@ class DataExtractor:
         return extension_retrieved
     
     def extract_url_without(self, s3_address):
+        '''
+        Take the url and match it to a regex where the //: trailing is kept and split into the bucket and key
+        Args:
+            s3_address: URL endpoint where the data is retrieved from
+        Return:
+            bucket: name of the bucket
+            key: name of the key
+        '''
         # regex pattern to match everything before the second forward slash
         pattern = re.compile(r'^(?:[^/]+://)?([^/]+)/(.*)$')
 
@@ -105,49 +115,43 @@ class DataExtractor:
 
     
     def extract_from_s3(self, s3_address):
+        '''
+        Method to extract data from an s3 bucket based on the file extension.
+        Use regex to extract the bucket and key, and used split to get the extension
+        Args:
+            s3_adress: URL endpoint where the data is retrieved from
+        Return:
+            df: extracted data as a dataframe
+        '''
         print(f"Downloading file from {s3_address}...")
         # Initialize the S3 client
         s3 = boto3.client('s3')
-
+        # Get the file extension
         file_extension = self.get_file_extension(s3_address)
-        # Splitting the S3 address to get the bucket and key
 
-        #s3_address 
+        # Splitting the S3 address to get the bucket and key
         bucket, key = self.extract_url_without(s3_address=s3_address)
         print(bucket, key)
-        #bucket, key = s3_address.split('/', 1)
 
         if file_extension == 'csv':
-        # # Download the file from S3
-        #     with open('products.csv', 'wb') as file:
-        #         s3.download_fileobj(bucket, key, file)
-
-        #     print("File has sucessfully downloaded.")
-        #     print("Reading the CSV file into DataFrame...")
-        #     # Read the CSV file into a DataFrame
-        #     df = pd.read_csv('products.csv')
 
             response = s3.get_object(Bucket=bucket, Key=key)
+            print("File has sucessfully retrieved.")
             content = response['Body'].read()
     
             # Create a Pandas DataFrame from the CSV data
+            print("Reading the CSV file into DataFrame...")
             df = pd.read_csv(io.BytesIO(content))
             return df
         
 
         elif file_extension == 'json':
-            # Download the file from S3
-            # with open('products.csv', 'wb') as file:
-            #     s3.download_fileobj(bucket, key, file)
-
-            # print("File has sucessfully downloaded.")
-            # print("Reading the CSV file into DataFrame...")
-            # # Read the CSV file into a DataFrame
-            # df = pd.read_csv('products.csv')
 
             response = s3.get_object(Bucket=bucket, Key=key)
+            print("File has sucessfully retrieved.")
             content = response['Body'].read()
-            
+
+            print("Reading the JSON file into DataFrame...")
             df = pd.read_json(io.BytesIO(content))
             return df
         else:
