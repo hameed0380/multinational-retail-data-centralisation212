@@ -1,3 +1,5 @@
+-- With the temp table code you want to substitue the column name and table name 
+
 
 ---------- orders_table
 -- Get Max length
@@ -164,15 +166,125 @@ ALTER COLUMN date_payment_confirmed TYPE DATE
 
 -- Essentially using this as a template for max length
 -- For card_number, expiry_date
-SELECT MAX(LENGTH(card_number)) AS max_length
+SELECT MAX(LENGTH(expiry_date)) AS max_length
 INTO TEMPORARY TABLE temp_max_length
 FROM dim_card_details;
 
 -- Alter the table to set the maximum length of the column
 DO $$ 
 BEGIN
-    EXECUTE 'ALTER TABLE dim_card_details ALTER COLUMN card_number TYPE VARCHAR(' || (SELECT max_length FROM temp_max_length) || ')';
+    EXECUTE 'ALTER TABLE dim_card_details ALTER COLUMN expiry_date TYPE VARCHAR(' || (SELECT max_length FROM temp_max_length) || ')';
 END $$;
 
 -- Drop the temporary table
 DROP TABLE temp_max_length;
+
+
+
+-- Setting primary keys
+
+ALTER TABLE dim_card_details
+ADD CONSTRAINT pk_card_number PRIMARY KEY (card_number);
+
+ALTER TABLE dim_store_details
+ADD CONSTRAINT pk_store_code PRIMARY KEY (store_code);
+
+ALTER TABLE dim_users
+ADD CONSTRAINT pk_user_uuid PRIMARY KEY (user_uuid);
+
+ALTER TABLE dim_products
+ADD CONSTRAINT pk_product_code PRIMARY KEY (product_code);
+
+ALTER TABLE dim_date_times
+ADD CONSTRAINT pk_date_uuid PRIMARY KEY (date_uuid);
+
+
+
+-- Setting foreign keys
+ALTER TABLE orders_table
+ADD CONSTRAINT fk_card_number FOREIGN KEY (card_number) REFERENCES dim_card_details(card_number),
+ADD CONSTRAINT fk_date_uuid FOREIGN KEY (date_uuid) REFERENCES dim_date_times(date_uuid),
+ADD CONSTRAINT fk_product_code FOREIGN KEY (product_code) REFERENCES dim_products(product_code),
+ADD CONSTRAINT fk_store_code FOREIGN KEY (store_code) REFERENCES dim_store_details(store_code),
+ADD CONSTRAINT fk_user_uuid FOREIGN KEY (user_uuid) REFERENCES dim_users(user_uuid);
+
+
+-- Milestone 4
+-- Task 1
+SELECT country_code,
+        COUNT(store_code)
+
+FROM dim_store_details
+GROUP BY country_code;
+
+-- Task 2
+SELECT locality,
+        COUNT(store_code) as total_no_stores
+
+FROM dim_store_details
+GROUP BY locality
+ORDER BY total_no_stores DESC;
+
+-- Task 3
+SELECT ROUND(CAST(SUM(orders_table.product_quantity * dim_products.product_price) AS NUMERIC), 2) as total_sales, 
+            dim_date_times.month 
+FROM orders_table
+JOIN dim_date_times ON orders_table.date_uuid = dim_date_times.date_uuid
+JOIN dim_products ON orders_table.product_code = dim_products.product_code
+GROUP BY dim_date_times.month
+ORDER BY total_sales DESC LIMIT 6;
+
+-- Task 4
+SELECT COUNT(store_code) as store_num_code,
+        SUM(product_quantity) as prod
+FROM orders_table
+WHERE store_code LIKE '%WEB%' OR store_code LIKE '%Web%';
+
+SELECT COUNT(store_code) as store_num_code,
+        SUM(product_quantity) as prod
+FROM orders_table
+WHERE store_code NOT LIKE '%WEB%' OR store_code NOT LIKE '%Web%';
+
+-- Task 5
+SELECT dim_store_details.store_type,
+        SUM(orders_table.product_quantity * dim_products.product_price) AS total_sales
+
+FROM orders_table
+INNER JOIN dim_store_details on dim_store_details.store_code=orders_table.store_code
+INNER JOIN dim_products on dim_products.product_code=orders_table.product_code
+GROUP BY dim_store_details.store_type
+
+
+-- Task 6
+SELECT SUM(orders_table.product_quantity * dim_products.product_price) AS total_sales,
+        dim_date_times.year,
+        dim_date_times.month
+
+FROM orders_table
+INNER JOIN dim_date_times on dim_date_times.date_uuid=orders_table.date_uuid
+INNER JOIN dim_store_details on dim_store_details.store_code=orders_table.store_code
+INNER JOIN dim_products on dim_products.product_code=orders_table.product_code
+GROUP BY dim_date_times.year, dim_date_times.month
+ORDER BY  total_sales DESC
+LIMIT 10;
+
+-- Task 7
+SELECT country_code,
+        SUM(staff_numbers) as num_staff
+FROM dim_store_details
+GROUP BY country_code
+ORDER BY num_staff DESC
+
+-- Task 8
+SELECT dim_store_details.country_code,
+        dim_store_details.store_type,
+        SUM(orders_table.product_quantity * dim_products.product_price) AS total_sales
+
+FROM orders_table
+INNER JOIN dim_store_details on dim_store_details.store_code=orders_table.store_code
+INNER JOIN dim_products on dim_products.product_code=orders_table.product_code
+
+WHERE dim_store_details.country_code LIKE '%DE%' 
+GROUP BY dim_store_details.country_code, dim_store_details.store_type;
+
+-- Task 9
