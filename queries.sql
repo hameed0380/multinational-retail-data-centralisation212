@@ -247,7 +247,8 @@ WHERE store_code NOT LIKE '%WEB%' OR store_code NOT LIKE '%Web%';
 
 -- Task 5
 SELECT dim_store_details.store_type,
-        SUM(orders_table.product_quantity * dim_products.product_price) AS total_sales
+        SUM(orders_table.product_quantity * dim_products.product_price) AS total_sales,
+        ROUND(SUM(orders_table.product_quantity) * 100.0 / SUM(SUM(orders_table.product_quantity)) OVER (), 2) 
 
 FROM orders_table
 INNER JOIN dim_store_details on dim_store_details.store_code=orders_table.store_code
@@ -288,3 +289,20 @@ WHERE dim_store_details.country_code LIKE '%DE%'
 GROUP BY dim_store_details.country_code, dim_store_details.store_type;
 
 -- Task 9
+WITH cte AS(
+    SELECT CAST(CONCAT(year, '-', month, '-', day, ' ', timestamp) AS TIMESTAMP) as datetimes, year FROM dim_date_times
+    ORDER BY datetimes DESC
+), cte2 AS(
+    SELECT 
+        year, 
+        datetimes, 
+        LEAD(datetimes, 1) OVER (ORDER BY datetimes DESC) as time_difference 
+        FROM cte
+
+) SELECT year, AVG((datetimes - time_difference)) as actual_time_taken FROM cte2
+GROUP BY year
+ORDER BY actual_time_taken DESC
+-- Used 2 CTE tables
+-- create a timestamp using the year, month, day and timestamp from date_time table and get year
+-- used this to calculate the time difference between the current row and the next row in the result set
+-- get avg of the datetimes - time_difference
