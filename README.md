@@ -47,8 +47,17 @@ This is a project looking at the ETL (Extract, Transform, Load) process focusing
 Run the project using the instructions provided in the "Installation" section.
 
 You can run the program via the viewdataframe.ipynb file
+## ERD
+
+Entity Relationship Diagram of database<br>
+
+![Entity Relationship Diagram of Database](Images/ERDiagram.png)
+
+
 ## File Structure
     .
+    ├── Images
+    │   └── ERDiagram.png
     ├── README.md
     ├── data_cleaning.py
     ├── data_extraction.py
@@ -59,3 +68,4 @@ You can run the program via the viewdataframe.ipynb file
     └── viewdataframes.ipynb
 
 ## License
+
