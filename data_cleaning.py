@@ -79,6 +79,14 @@ class DataCleaning:
         return cleaned_card_df
 
     def clean_store_data(self, store_df):
+        '''
+        Function to clean the store data retrieved and perform operations
+        
+        Args: 
+            store_df: store data dataframe containing the data about store
+        Returns:
+            cleaned_store_df: cleaned card dataframe 
+        '''
         # Creating a copy of the dataframe which is best practice
         cleaned_store_df = store_df.copy()
         cleaned_store_df = cleaned_store_df.drop_duplicates()
