@@ -96,8 +96,8 @@ class DataExtractor:
             extension_retrieved: extracted extension
         '''
         delimiter = "."
-        parts = s3_address.split(delimiter)
-        extension_retrieved = parts[-1]
+        parts = s3_address.split(delimiter) # separate at the full stop
+        extension_retrieved = parts[-1] # get everything after full stop
         return extension_retrieved
     
     def extract_url_without(self, s3_address):
@@ -114,8 +114,8 @@ class DataExtractor:
         pattern = re.compile(r'^(?:[^/]+://)?([^/]+)/(.*)$')
         # Match pattern of regex
         match_pattern = pattern.match(s3_address)
-        bucket = match_pattern.group(1)
-        key = match_pattern.group(2)
+        bucket = match_pattern.group(1) # contains the bucket section
+        key = match_pattern.group(2) # contains the key section
         print(bucket, key)
         return bucket, key
 

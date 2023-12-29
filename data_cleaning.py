@@ -40,9 +40,7 @@ class DataCleaning:
         # Drop rows with wrong country codes
         incorrect_country_codes = ~cleaned_user_df['country_code'].isin(['US','GB','DE'])
         cleaned_user_df = cleaned_user_df[~incorrect_country_codes]
-
         print(len(cleaned_user_df))
-
         return cleaned_user_df
         
     def get_digits(self, numbers):
@@ -74,7 +72,6 @@ class DataCleaning:
         # Convert to datetime d type
         cleaned_card_df['date_payment_confirmed'] = pd.to_datetime(cleaned_card_df['date_payment_confirmed'], format='%Y-%m-%d', errors='coerce').dt.date
         #cleaned_card_df = cleaned_card_df.dropna(subset=['date_payment_confirmed'])
-
         print(len(cleaned_card_df))
         return cleaned_card_df
 
@@ -114,7 +111,6 @@ class DataCleaning:
         # Setting opening_date column to be the correct datatype.
         cleaned_store_df['opening_date'] = pd.to_datetime(cleaned_store_df['opening_date'], format='%Y-%m-%d', errors='coerce').dt.date
         #cleaned_store_df = cleaned_store_df.dropna(subset=['opening_date'])
-
         print(cleaned_store_df)
         print(cleaned_store_df.dtypes) # checking changes
         return cleaned_store_df
@@ -178,7 +174,6 @@ class DataCleaning:
         cleaned_products_df['removed'] = cleaned_products_df['removed'].astype('category')
         cleaned_products_df['product_price'] = cleaned_products_df['product_price'].astype(float)
         cleaned_products_df['weight'] = cleaned_products_df['weight'].astype(float)
-
         return cleaned_products_df
     
     def clean_orders_data(self, orders_df):
