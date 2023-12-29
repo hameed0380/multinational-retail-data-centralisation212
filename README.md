@@ -8,6 +8,7 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [File Structure](#file-structure)
+- [ERD](#erd)
 - [License](#license)
 
 ## Description

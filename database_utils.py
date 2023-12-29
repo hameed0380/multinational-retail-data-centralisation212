@@ -2,11 +2,11 @@ import yaml
 from sqlalchemy import create_engine, inspect
 import pandas as pd
 
+
 class DatabaseConnector:
     
     def __init__(self) -> None:
         self.engine = self.init_db_engine()
-
 
     def read_db_creds(self):
         '''
@@ -49,7 +49,7 @@ class DatabaseConnector:
     def upload_to_db(self, df, tablename):
         '''
         Creates and uploads table to database
-        
+
         args:
             df: the dataframe to be uploaded to the db
             tablename: establish name of table
