@@ -11,10 +11,10 @@ class DataExtractor:
 
     def __init__(self) -> None:
         self.dbconn = DatabaseConnector()
-        self.headers = {'x-api-key': 'ayFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMXi_key'}
     
     def read_rds_table(self, table_name):
-        '''Extracts the data from RDS database and returns it as a DataFrame.
+        '''
+        Extracts the data from RDS database and returns it as a DataFrame.
         
         Args:
             table_name: name of the table we want to extract from
@@ -28,6 +28,11 @@ class DataExtractor:
     def retrieve_pdf_data(self, link):
         '''
         Extract all pages from the pdf document
+
+        Args:
+            link: location of the data - stored in a pdf
+        Returns:
+            df: returns data as a dataframe
         '''
         dfs = tabula.read_pdf(link, pages='all')
         df = pd.concat(dfs)
@@ -42,7 +47,7 @@ class DataExtractor:
             endpoint: URL endpoint where the store data is retrieved from
             headers: A dictionary that contains the headers to be included in the HTTP request
         Returns:
-            DataFrame: returns the number of stores
+            response: returns the number of stores
         '''
         # Make a GET request to the specified API endpoint with the provided headers
         response = requests.get(endpoint, headers=headers)
@@ -67,7 +72,7 @@ class DataExtractor:
         '''
         combined_df = []
         for store_num in range(0, num_stores):
-            complete_endpoint = endpoint + str(store_num)
+            complete_endpoint = f"{endpoint}{store_num}"
             # Make a GET request to the specified API endpoint with the provided headers
             response = requests.get(complete_endpoint, headers=headers)
             if response.status_code == 200:
@@ -84,6 +89,7 @@ class DataExtractor:
     def get_file_extension(self, s3_address):
         '''
         Retrieve anything trailling . in the url to retrieve the files extension rather then hard coding
+
         Args:
             s3 address: URL endpoint where the data is retrieved from
         Return:
@@ -97,6 +103,7 @@ class DataExtractor:
     def extract_url_without(self, s3_address):
         '''
         Take the url and match it to a regex where the //: trailing is kept and split into the bucket and key
+
         Args:
             s3_address: URL endpoint where the data is retrieved from
         Return:
@@ -105,7 +112,6 @@ class DataExtractor:
         '''
         # regex pattern to match everything before the second forward slash
         pattern = re.compile(r'^(?:[^/]+://)?([^/]+)/(.*)$')
-
         # Match pattern of regex
         match_pattern = pattern.match(s3_address)
         bucket = match_pattern.group(1)
@@ -117,7 +123,8 @@ class DataExtractor:
     def extract_from_s3(self, s3_address):
         '''
         Method to extract data from an s3 bucket based on the file extension.
-        Use regex to extract the bucket and key, and used split to get the extension
+        Use regex to extract the bucket and key, and used split to get the extension and return dataframe
+
         Args:
             s3_adress: URL endpoint where the data is retrieved from
         Return:
@@ -128,29 +135,27 @@ class DataExtractor:
         s3 = boto3.client('s3')
         # Get the file extension
         file_extension = self.get_file_extension(s3_address)
-
         # Splitting the S3 address to get the bucket and key
         bucket, key = self.extract_url_without(s3_address=s3_address)
         print(bucket, key)
-
+        # case where the file is a csv
         if file_extension == 'csv':
 
+            # Retrieve CSV File from S3 then reads the content of the object
             response = s3.get_object(Bucket=bucket, Key=key)
             print("File has sucessfully retrieved.")
             content = response['Body'].read()
-    
             # Create a Pandas DataFrame from the CSV data
             print("Reading the CSV file into DataFrame...")
             df = pd.read_csv(io.BytesIO(content))
             return df
-        
-
+        # case where the file is a json
         elif file_extension == 'json':
 
+            # Retrieve JSON File from S3 then reads the content of the object
             response = s3.get_object(Bucket=bucket, Key=key)
             print("File has sucessfully retrieved.")
             content = response['Body'].read()
-
             print("Reading the JSON file into DataFrame...")
             df = pd.read_json(io.BytesIO(content))
             return df
@@ -161,8 +166,6 @@ class DataExtractor:
 
 
 
-    
-
 if __name__ == '__main__':
     RDS_CONNECTOR = DatabaseConnector()
     RDS_CONNECTOR.init_db_engine()
@@ -171,7 +174,7 @@ if __name__ == '__main__':
     data = RDS_CONNECTOR.init_db_engine()
 
     lamb = DataExtractor()
-    # ['legacy_store_details', 'legacy_users', 'orders_table']
+    # ['legacy_store_details', 'legacy_users', 'orders_table'] reminder of names
     print(lamb.read_rds_table('legacy_users'))
     k = lamb.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
     print(k)
