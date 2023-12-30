@@ -22,7 +22,6 @@ This is a project looking at the ETL (Extract, Transform, Load) process focusing
 
 3. Loading: loading the cleansed data to the destination in this case sales_data PostgreSQL database.
 
-
 ## Installation
 1. Clone the project repository from GitHub.
 
@@ -53,7 +52,6 @@ You can run the program via the viewdataframe.ipynb file
 Entity Relationship Diagram of database<br>
 
 ![Entity Relationship Diagram of Database](Images/ERDiagram.png)
-
 
 ## File Structure
     .

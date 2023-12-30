@@ -13,14 +13,14 @@ ALTER COLUMN product_quantity TYPE SMALLINT;
 
 -- Essentially using this as a template for max length
 -- For card_number, store_code, product_code
-SELECT MAX(LENGTH(card_number)) AS max_length
+SELECT MAX(LENGTH(store_code)) AS max_length
 INTO TEMPORARY TABLE temp_max_length
 FROM orders_table;
 
 -- Alter the table to set the maximum length of the card_number column
 DO $$ 
 BEGIN
-    EXECUTE 'ALTER TABLE orders_table ALTER COLUMN card_number TYPE VARCHAR(' || (SELECT max_length FROM temp_max_length) || ')';
+    EXECUTE 'ALTER TABLE orders_table ALTER COLUMN store_code TYPE VARCHAR(' || (SELECT max_length FROM temp_max_length) || ')';
 END $$;
 
 -- Drop the temporary table
@@ -145,14 +145,14 @@ ALTER COLUMN date_uuid TYPE UUID USING date_uuid::uuid
 
 -- Essentially using this as a template for max length
 -- For month, year, day, time_period
-SELECT MAX(LENGTH(time_period)) AS max_length
+SELECT MAX(LENGTH(day)) AS max_length
 INTO TEMPORARY TABLE temp_max_length
 FROM dim_date_times;
 
 -- Alter the table to set the maximum length of the column
 DO $$ 
 BEGIN
-    EXECUTE 'ALTER TABLE dim_date_times ALTER COLUMN time_period TYPE VARCHAR(' || (SELECT max_length FROM temp_max_length) || ')';
+    EXECUTE 'ALTER TABLE dim_date_times ALTER COLUMN day TYPE VARCHAR(' || (SELECT max_length FROM temp_max_length) || ')';
 END $$;
 
 -- Drop the temporary table
@@ -166,14 +166,14 @@ ALTER COLUMN date_payment_confirmed TYPE DATE
 
 -- Essentially using this as a template for max length
 -- For card_number, expiry_date
-SELECT MAX(LENGTH(expiry_date)) AS max_length
+SELECT MAX(LENGTH(card_number)) AS max_length
 INTO TEMPORARY TABLE temp_max_length
 FROM dim_card_details;
 
 -- Alter the table to set the maximum length of the column
 DO $$ 
 BEGIN
-    EXECUTE 'ALTER TABLE dim_card_details ALTER COLUMN expiry_date TYPE VARCHAR(' || (SELECT max_length FROM temp_max_length) || ')';
+    EXECUTE 'ALTER TABLE dim_card_details ALTER COLUMN card_number TYPE VARCHAR(' || (SELECT max_length FROM temp_max_length) || ')';
 END $$;
 
 -- Drop the temporary table
