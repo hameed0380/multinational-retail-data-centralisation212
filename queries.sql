@@ -137,7 +137,9 @@ END $$;
 -- Drop the temporary table
 DROP TABLE temp_max_length;
 
-
+-- The problem is while it is in upper case postgres recognises this as a string. 
+-- You can check this by dragging and dropping the table in the query editor tool. 
+-- It should come up as "EAN" rather then ean.
 
 -------- dim_date_times
 ALTER TABLE dim_date_times
@@ -166,21 +168,20 @@ ALTER COLUMN date_payment_confirmed TYPE DATE
 
 -- Essentially using this as a template for max length
 -- For card_number, expiry_date
-SELECT MAX(LENGTH(card_number)) AS max_length
+SELECT MAX(LENGTH(expiry_date)) AS max_length
 INTO TEMPORARY TABLE temp_max_length
 FROM dim_card_details;
 
 -- Alter the table to set the maximum length of the column
 DO $$ 
 BEGIN
-    EXECUTE 'ALTER TABLE dim_card_details ALTER COLUMN card_number TYPE VARCHAR(' || (SELECT max_length FROM temp_max_length) || ')';
+    EXECUTE 'ALTER TABLE dim_card_details ALTER COLUMN expiry_date TYPE VARCHAR(' || (SELECT max_length FROM temp_max_length) || ')';
 END $$;
 
 -- Drop the temporary table
 DROP TABLE temp_max_length;
 
-
-
+DROP TABLE dim_card_details CASCADE;
 -- Setting primary keys
 
 ALTER TABLE dim_card_details

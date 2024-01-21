@@ -28,7 +28,7 @@ class DataCleaning:
         for date in dates: 
             cleaned_user_df[date] = pd.to_datetime(cleaned_user_df[date], format='%Y-%m-%d', errors='coerce').dt.date
         # Get all the digits and remove everything else
-        cleaned_user_df['phone_number'] = cleaned_user_df['phone_number'].apply(self.get_digits)
+        cleaned_user_df['phone_number'] = cleaned_user_df['phone_number'].apply(self.__get_digits)
         cleaned_user_df = cleaned_user_df.dropna(subset=['phone_number'])
         # Make sure GB is the correct country_code
         cleaned_user_df['country_code'] = cleaned_user_df['country_code'].replace('GGB','GB', regex=True)
@@ -43,7 +43,7 @@ class DataCleaning:
         print(len(cleaned_user_df))
         return cleaned_user_df
         
-    def get_digits(self, numbers):
+    def __get_digits(self, numbers):
         '''
         function to extract numbers
 
@@ -51,6 +51,38 @@ class DataCleaning:
             numbers: The phone number being stripped
         '''
         return re.sub(r'\D', '', numbers)
+    
+    def __standardize_date_column(self, df, column_name):
+        '''
+        Standardize date values in a specified column of the DataFrame.
+
+        Args:
+            df: The DataFrame containing the data.
+            column_name: The name of the column in the DataFrame containing date values.
+
+        Returns:
+            df: The DataFrame with the specified column standardized to datetime format.
+        '''
+        # CDate formats 
+        date_formats = ['%Y-%m-%d', '%B:%d:%y', '%Y:%B:%d', '%B:%Y:%d']
+
+        # Function to convert date to a standardized format
+        def convert_date(date_input):
+            for date_format in date_formats:
+                try:
+                    return pd.to_datetime(date_input, format=date_format)
+                except ValueError:
+                    pass
+            return date_input
+
+        # Apply the convert_date function to the specified column
+        df[column_name] = df[column_name].apply(convert_date)
+
+        # Perform a final conversion with 'coerce' to handle any remaining unconverted values
+        df[column_name] = pd.to_datetime(df[column_name], errors='coerce')
+
+        return df
+    
 
     def clean_card_data(self, card_df):
         '''
@@ -68,11 +100,15 @@ class DataCleaning:
         cleaned_card_df = cleaned_card_df.drop_duplicates()
         # change to a string so I can perform operations
         cleaned_card_df['card_number'] = cleaned_card_df['card_number'].astype(str)
-        cleaned_card_df['card_number'] = cleaned_card_df['card_number'].apply(self.get_digits)
+        cleaned_card_df['card_number'] = cleaned_card_df['card_number'].apply(self.__get_digits)
         # Convert to datetime d type
-        cleaned_card_df['date_payment_confirmed'] = pd.to_datetime(cleaned_card_df['date_payment_confirmed'], format='%Y-%m-%d', errors='coerce').dt.date
-        #cleaned_card_df = cleaned_card_df.dropna(subset=['date_payment_confirmed'])
+        # cleaned_card_df['date_payment_confirmed'] = pd.to_datetime(cleaned_card_df['date_payment_confirmed'], format='%Y-%m-%d')
+        # cleaned_card_df['date_payment_confirmed'] = pd.to_datetime(cleaned_card_df['date_payment_confirmed'], errors='coerce')
+        cleaned_card_df = self.__standardize_date_column(cleaned_card_df, 'date_payment_confirmed')
+
+        cleaned_card_df = cleaned_card_df.dropna(subset=['date_payment_confirmed'])
         print(len(cleaned_card_df))
+        print(cleaned_card_df)
         return cleaned_card_df
 
     def clean_store_data(self, store_df):
@@ -101,7 +137,7 @@ class DataCleaning:
         cleaned_store_df['continent'] = cleaned_store_df['continent'].str.replace('ee', '', regex=False)
         # Getting digits only for staff numbers
         cleaned_store_df['staff_numbers'] = cleaned_store_df['staff_numbers'].astype(str)
-        cleaned_store_df['staff_numbers'] = cleaned_store_df['staff_numbers'].apply(self.get_digits)
+        cleaned_store_df['staff_numbers'] = cleaned_store_df['staff_numbers'].apply(self.__get_digits)
         # Changing datatype of a column to the correct datatype.
         cleaned_store_df['longitude'] = cleaned_store_df['longitude'].astype(float)
         cleaned_store_df['latitude'] = cleaned_store_df['latitude'].astype(float)
@@ -157,8 +193,7 @@ class DataCleaning:
         cleaned_products_df = product_df.copy()
         # Dropping the null values and dups
         cleaned_products_df = cleaned_products_df.drop_duplicates().dropna()
-        # Standardise dates
-        cleaned_products_df['date_added'] = pd.to_datetime(cleaned_products_df['date_added'], format='%Y-%m-%d', errors='coerce').dt.date
+        cleaned_products_df = cleaned_products_df.drop(['Unnamed: 0'], axis=1)
         # Remove £ from the rows in the column
         cleaned_products_df['product_price'] = cleaned_products_df['product_price'].str.replace('£', '', regex=False)
         # Acts like a mask to get all the letters in the product price, then filters the DataFrame by selecting only the rows where the corresponding value in incorrect_rows_with_invalid_prices is False
@@ -168,12 +203,12 @@ class DataCleaning:
         cleaned_products_df['weight'] = cleaned_products_df['weight'].apply(self.convert_product_weights)
         # Convert to numeric and dropna 
         cleaned_products_df['weight'] = pd.to_numeric(cleaned_products_df['weight'], errors='coerce')
-        cleaned_products_df = cleaned_products_df.dropna(subset=['weight'])
         # Converting columns to correct dtypes.
         cleaned_products_df['category'] = cleaned_products_df['category'].astype('category')
         cleaned_products_df['removed'] = cleaned_products_df['removed'].astype('category')
         cleaned_products_df['product_price'] = cleaned_products_df['product_price'].astype(float)
         cleaned_products_df['weight'] = cleaned_products_df['weight'].astype(float)
+        print(len(cleaned_products_df))
         return cleaned_products_df
     
     def clean_orders_data(self, orders_df):
@@ -191,12 +226,12 @@ class DataCleaning:
         cleaned_orders_df = cleaned_orders_df.drop(['level_0', '1', 'first_name', 'last_name'], axis=1)
         # change to a string so I can perform operations
         cleaned_orders_df['card_number'] = cleaned_orders_df['card_number'].astype(str)
-        cleaned_orders_df['card_number'] = cleaned_orders_df['card_number'].apply(self.get_digits)
+        cleaned_orders_df['card_number'] = cleaned_orders_df['card_number'].apply(self.__get_digits)
         # Converting columns to correct dtypes.
         cleaned_orders_df['product_quantity'] = cleaned_orders_df['product_quantity'].astype('int32')
         # Remove dupes
         cleaned_orders_df = cleaned_orders_df.drop_duplicates()
-
+        print(len(cleaned_orders_df))
         return cleaned_orders_df
     
     def clean_date_data(self, date_df):
@@ -217,24 +252,5 @@ class DataCleaning:
         date_df = date_df.dropna(subset=['timestamp'])
         # Extract the time component only
         date_df['timestamp'] = date_df['timestamp'].dt.time
+        print(len(date_df))
         return date_df
-
-
-
-if __name__ == '__main__':
-    RDS_CONNECTOR = DatabaseConnector()
-    RDS_CONNECTOR.init_db_engine()
-    RDS_CONNECTOR.list_db_tables()
-
-    lamb = DataExtractor()
-    # ['legacy_store_details', 'legacy_users', 'orders_table']
-    # print(lamb.read_rds_table('legacy_users'))
-    cleaned_user = lamb.read_rds_table('legacy_users')
-
-    test_clean = DataCleaning()
-    i = test_clean.clean_user_data(cleaned_user)
-    #RDS_CONNECTOR.upload_to_db(i, 'dim_users')
-    retrieved_data = lamb.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
-    #print(retrieved_data)
-    cleaned = test_clean.clean_card_data(retrieved_data)
-    RDS_CONNECTOR.upload_to_db(cleaned, 'dim_store_details')

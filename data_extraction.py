@@ -163,18 +163,3 @@ class DataExtractor:
             print('Print error unsupported format')
 
         print("DataFrame created ")
-
-
-
-if __name__ == '__main__':
-    RDS_CONNECTOR = DatabaseConnector()
-    RDS_CONNECTOR.init_db_engine()
-    data = RDS_CONNECTOR.init_db_engine()
-    RDS_CONNECTOR.list_db_tables()
-    data = RDS_CONNECTOR.init_db_engine()
-
-    lamb = DataExtractor()
-    # ['legacy_store_details', 'legacy_users', 'orders_table'] reminder of names
-    print(lamb.read_rds_table('legacy_users'))
-    k = lamb.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
-    print(k)
