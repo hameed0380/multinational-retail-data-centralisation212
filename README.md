@@ -12,7 +12,7 @@
 - [License](#license)
 
 ## Description
-This is a project looking at the ETL (Extract, Transform, Load) process focusing on data to do with sales. This involves extracting data from a wide range of sources such as apis, AWS S3 bucket, CSV files and pdf and preparing the data by cleaning and perfomring transformations such as converting to the correct dtype or a making the format of columns with similar data more uniform. 
+This is a project looking at the ETL (Extract, Transform, Load) process focusing on data to do with sales. This involves extracting data from a wide range of sources such as APIs, AWS S3 bucket, CSV files and pdf and preparing the data by cleaning and performing transformations such as converting to the correct dtype or making the format of columns with similar data more uniform.
 
 ## Process
 
