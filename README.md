@@ -2,25 +2,25 @@
 
 ![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue) ![Postgresql](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) ![AWS](https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) ![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)  ![Git](https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white) ![VSCode](	https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)</div>
 
-## Table of Contents
+### Table of Contents
 - [Multinational Retail Data Centralisation](#multinational-retail-data-centralisation)
-  - [Table of Contents](#table-of-contents)
-  - [Description](#description)
-  - [Process](#process)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [ERD](#erd)
-  - [File Structure](#file-structure)
-  - [License](#license)
+    - [Table of Contents](#table-of-contents)
+    - [Description](#description)
+    - [Process](#process)
+    - [Installation](#installation)
+    - [Usage](#usage)
+    - [ERD](#erd)
+    - [File Structure](#file-structure)
+    - [License](#license)
 
-## Description
+### Description
 This project centers on the ETL (Extract, Transform, Load) process, with a specific focus on sales-related data. It involves extracting data from a diverse array of sources including APIs, AWS S3 buckets, CSV files, and PDFs. Subsequently, the data undergoes thorough preparation, encompassing cleaning and transformation tasks such as standardizing data types and ensuring uniform formatting across columns with similar data. The processed data is then loaded into a centralized PostgreSQL database.
 
 The overarching goal of this project is to streamline data management by consolidating disparate data sources into a single, centralized repository. By establishing a unified source of truth for all sales-related data, the project facilitates easy access and comprehensive analysis, thereby fostering a data-driven decision-making culture within the organization.
 
 ![Overview of Project](Images/MRDC-GRAPH.png)
 
-## Process
+### Process
 
 1. Extraction: Extract data from different sources, including CSV files, an API, AWS S3, and an AWS RDS database.
 
@@ -28,7 +28,7 @@ The overarching goal of this project is to streamline data management by consoli
 
 3. Loading: loading the cleansed data to the destination in this case sales_data PostgreSQL database.
 
-## Installation
+### Installation
 1. Clone the project repository from GitHub
 
    Clone the repository:
@@ -47,7 +47,7 @@ The overarching goal of this project is to streamline data management by consoli
    - Make sure PostgreSQL is set up and running.
    - Set up a database named sales_data.
    - Create a db_creds.yaml file with your PostgreSQL credentials.
-## Usage
+### Usage
 
 - **data_extraction.py:** Contains the DataExtractor class, responsible for extracting data from various sources such as CSV files, APIs, AWS S3, and databases.
 
@@ -63,13 +63,13 @@ The overarching goal of this project is to streamline data management by consoli
 Run the project using the instructions provided in the "Installation" section.
 You can run the program via the viewdataframe.ipynb file
 
-## ERD
+### ERD
 
 Entity Relationship Diagram of database<br>
 
 ![Entity Relationship Diagram of Database](Images/ERDiagram.png)
 
-## File Structure
+### File Structure
     .
     ├── Images
     │   └── ERDiagram.png
@@ -82,7 +82,7 @@ Entity Relationship Diagram of database<br>
     ├── queries.sql
     └── viewdataframes.ipynb
 
-## License
+### License
 
 
 
