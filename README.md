@@ -1,10 +1,19 @@
-# Multinational Retail Data Centralisation
+ # Multinational Retail Data Centralisation
 
 ![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue) ![Postgresql](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) ![AWS](https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) ![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)  ![Git](https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white) ![VSCode](	https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)</div>
 
+## Table of Contents
+- [Multinational Retail Data Centralisation](#multinational-retail-data-centralisation)
+  - [Table of Contents](#table-of-contents)
+  - [Description](#description)
+  - [Process](#process)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [ERD](#erd)
+  - [File Structure](#file-structure)
+  - [License](#license)
 
 ## Description
-
 This project centers on the ETL (Extract, Transform, Load) process, with a specific focus on sales-related data. It involves extracting data from a diverse array of sources including APIs, AWS S3 buckets, CSV files, and PDFs. Subsequently, the data undergoes thorough preparation, encompassing cleaning and transformation tasks such as standardizing data types and ensuring uniform formatting across columns with similar data. The processed data is then loaded into a centralized PostgreSQL database.
 
 The overarching goal of this project is to streamline data management by consolidating disparate data sources into a single, centralized repository. By establishing a unified source of truth for all sales-related data, the project facilitates easy access and comprehensive analysis, thereby fostering a data-driven decision-making culture within the organization.
