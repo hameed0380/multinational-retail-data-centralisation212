@@ -13,6 +13,7 @@
   - [File Structure](#file-structure)
   - [License](#license)
 
+
 ## Description
 
 This project centers on the ETL (Extract, Transform, Load) process, with a specific focus on sales-related data. It involves extracting data from a diverse array of sources including APIs, AWS S3 buckets, CSV files, and PDFs. Subsequently, the data undergoes thorough preparation, encompassing cleaning and transformation tasks such as standardizing data types and ensuring uniform formatting across columns with similar data. The processed data is then loaded into a centralized PostgreSQL database.
