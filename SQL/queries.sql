@@ -181,7 +181,12 @@ END $$;
 -- Drop the temporary table
 DROP TABLE temp_max_length;
 
+DROP TABLE dim_users CASCADE;
 DROP TABLE dim_card_details CASCADE;
+DROP TABLE dim_products CASCADE;
+DROP TABLE dim_store_details CASCADE;
+DROP TABLE dim_date_times CASCADE;
+
 -- Setting primary keys
 
 ALTER TABLE dim_card_details
@@ -246,6 +251,16 @@ SELECT COUNT(store_code) as store_num_code,
 FROM orders_table
 WHERE store_code NOT LIKE '%WEB%' OR store_code NOT LIKE '%Web%';
 
+
+            SELECT 	COUNT(*) AS numbers_of_sales,
+                    SUM(product_quantity) AS product_quantity_count,
+                    CASE
+                        WHEN store_code LIKE 'WEB%' THEN 'Web'
+                        ELSE 'Offline'
+                    END AS location
+            FROM orders_table
+            GROUP BY location
+            ORDER BY location DESC;
 -- Task 5
 SELECT dim_store_details.store_type,
         SUM(orders_table.product_quantity * dim_products.product_price) AS total_sales,
