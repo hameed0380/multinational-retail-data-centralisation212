@@ -16,7 +16,7 @@
 
 ### Description
 ***
-This project centers on the ETL (Extract, Transform, Load) process, with a specific focus on sales-related data. It involves extracting data from a diverse array of sources including APIs, AWS S3 buckets, CSV files, and PDFs. Subsequently, the data undergoes thorough preparation, encompassing cleaning and transformation tasks such as standardizing data types and ensuring uniform formatting across columns with similar data. The processed data is then loaded into a centralized PostgreSQL database.
+This project centers on the ETL (Extract, Transform, Load) process, with a specific focus on sales-related data. It involves extracting data from a diverse array of sources including `APIs`, `AWS S3 buckets`, `CSV files`, and `PDFs`. Subsequently, the data undergoes thorough preparation, encompassing cleaning and transformation tasks such as standardizing data types and ensuring uniform formatting across columns with similar data. The processed data is then loaded into a centralized `PostgreSQL` database.
 
 The overarching goal of this project is to streamline data management by consolidating disparate data sources into a single, centralized repository. By establishing a unified source of truth for all sales-related data, the project facilitates easy access and comprehensive analysis, thereby fostering a data-driven decision-making culture within the organization.
 
@@ -27,9 +27,9 @@ Here is the outline of the ETL Process.<br>
 
 ![Overview of Project](Images/MRDC-GRAPH.png)
 
-1. `Extraction`: Extract data from different sources, including CSV files, an API, AWS S3, and an AWS RDS database.
-2. `Transformation`: transforming (and cleansing) the extracted data to make sure there consistency and it is compatible with a destination.
-3. `Loading`: loading the cleansed data to the destination in this case sales_data PostgreSQL database.
+1. `Extraction`: Extract data from various sources, including CSV files, APIs, AWS S3, and an AWS RDS database.
+2. `Transformation`: Transform the extracted data to ensure consistency and compatibility with the destination. Tasks includes cleaning, converting data types, aggregating, and performing calculations.
+3. `Loading`: Load the cleansed data into the destination, in this case, the sales_data PostgreSQL database.
 
 ### ERD
 ***
