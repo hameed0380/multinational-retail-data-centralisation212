@@ -11,6 +11,7 @@
     - [Installation Instructions](#installation-instructions)
     - [Usage](#usage)
     - [SQL Queries](#sql-queries)
+      - [Example Queries](#example-queries)
     - [File Structure](#file-structure)
 
 ### Description
@@ -26,11 +27,9 @@ Here is the outline of the ETL Process.<br>
 
 ![Overview of Project](Images/MRDC-GRAPH.png)
 
-1. Extraction: Extract data from different sources, including CSV files, an API, AWS S3, and an AWS RDS database.
-
-2. Transformation: transforming (and cleansing) the extracted data to make sure there consistency and it is compatible with a destination.
-
-3. Loading: loading the cleansed data to the destination in this case sales_data PostgreSQL database.
+1. `Extraction`: Extract data from different sources, including CSV files, an API, AWS S3, and an AWS RDS database.
+2. `Transformation`: transforming (and cleansing) the extracted data to make sure there consistency and it is compatible with a destination.
+3. `Loading`: loading the cleansed data to the destination in this case sales_data PostgreSQL database.
 
 ### ERD
 ***
@@ -77,7 +76,52 @@ You can run the program via the viewdataframe.ipynb file by running each cell.
 
 ### SQL Queries
 ***
-The project also contains a file with a series of SQL queries. The first section of the file contains queries that alter tables, like changing data types, adding primary and foreign keys. The second section of the file contains queries for extracting insights from the data, such as finding out how certain types of store are performing in a particular country or which months produce the highest volume of sales.
+The project also contains a file with a series of SQL queries in the SQL folder called **queries.sql**. The first section of the file contains queries that alter tables, like changing data types, adding primary and foreign keys. The second section of the file contains queries for extracting insights from the data, such as finding out how certain types of store are performing in a particular country or which months produce the highest volume of sales.
+
+#### Example Queries
+**How many stores does the business have and in which countries?**
+
+Query:
+```sql
+SELECT country_code,
+        COUNT(store_code)
+
+FROM dim_store_details
+GROUP BY country_code;
+```
+
+Output:
+| country_code | count |
+|--------------|-------|
+| US           | 34    |
+| GB           | 266   |
+| DE           | 141   |
+
+
+**What percentage of sales come through each type of store?**
+
+Query:
+```sql
+SELECT dim_store_details.store_type,
+        SUM(orders_table.product_quantity * dim_products.product_price) AS total_sales,
+        ROUND(SUM(orders_table.product_quantity) * 100.0 / SUM(SUM(orders_table.product_quantity)) OVER (), 2) 
+
+FROM orders_table
+INNER JOIN dim_store_details on dim_store_details.store_code=orders_table.store_code
+INNER JOIN dim_products on dim_products.product_code=orders_table.product_code
+GROUP BY dim_store_details.store_type
+```
+
+Output:
+| store_type   | total_sales       | round |
+|--------------|-------------------|-------|
+| Local        | 3440896.519999819 | 44.89 |
+| Mall Kiosk   | 698791.6099999978 | 8.88  |
+| Outlet       | 631804.8099999994 | 8.14  |
+| Super Store  | 1224293.6499999806| 15.72 |
+| Web Portal   | 1726547.0499999532| 22.36 |
+
+
 
 ### File Structure
 ***
