@@ -3,16 +3,13 @@
 ![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue) ![Postgresql](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) ![AWS](https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) ![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)  ![Git](https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white) ![VSCode](	https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)</div>
 
 ### Table of Contents
-- [Multinational Retail Data Centralisation](#multinational-retail-data-centralisation)
-    - [Table of Contents](#table-of-contents)
-    - [Description](#description)
-    - [The ETL Process](#the-etl-process)
-    - [ERD](#erd)
-    - [Installation Instructions](#installation-instructions)
-    - [Usage](#usage)
-    - [SQL Queries](#sql-queries)
-      - [Example Queries](#example-queries)
-    - [File Structure](#file-structure)
+ - [Description](#description)
+ - [The ETL Process](#the-etl-process)
+ - [ERD](#erd)
+ - [Installation Instructions](#installation-instructions)
+ - [Usage](#usage)
+ - [SQL Queries](#sql-queries)
+ - [File Structure](#file-structure)
 
 ### Description
 ***
